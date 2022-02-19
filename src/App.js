@@ -34,7 +34,6 @@ export const App = () => {
 
       recognizer.recognizeOnceAsync(result => {
         let displayText;
-        setMsg('Wait for results...');
         if (result.reason === ResultReason.RecognizedSpeech) {
           var pronunciationAssessmentResult = speechsdk.PronunciationAssessmentResult.fromResult(result);
           var pronunciationScore = pronunciationAssessmentResult.pronunciationScore;
@@ -49,11 +48,8 @@ export const App = () => {
 
         setMsg(displayText);
       });
+      setMsg('Wait for results...');
     }
-  }
-
-  const handleInputOnChange = (e) => {
-    setPhrase(e.target.value);    
   }
 
   return (
@@ -63,7 +59,7 @@ export const App = () => {
       <div className="row main-container">
         <div className="col-6">
           <label htmlFor="inputPhrase">Enter a phrase to check pronunciation:</label>
-          <input id="inputPhrase" className="form-control mb-3" type="text" value={ phrase } onChange={ handleInputOnChange } />
+          <input id="inputPhrase" className="form-control mb-3" type="text" value={ phrase } onChange={ (e) => setPhrase(e.target.value) } />
           <i className="fas fa-microphone fa-lg me-2" onClick={() => sttFromMic()}></i>
           Convert speech to text from your mic.         
         </div>
