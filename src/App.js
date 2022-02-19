@@ -7,11 +7,12 @@ const speechsdk = require('microsoft-cognitiveservices-speech-sdk');
 
 export const App = () => {
 
-  const [msg, setMsg] = useState('INITIALIZED: ready to speech...');
+  const [msg, setMsg] = useState('INITIALIZED: Click on microphone and start to speak');
+  const [phrase, setPhrase] = useState('Hello, I am the best');
 
   const sttFromMic = async () => {
+    setMsg('Initializing...');
     const tokenRes = await getTokenOrRefresh();
-    console.log(tokenRes);
 
     if (tokenRes.authToken === null) {
       setMsg(`FATAL_ERROR: ${tokenRes.error}`);
@@ -22,23 +23,25 @@ export const App = () => {
       const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();
       const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
 
-      const pronunciationAssesmentConfig = new PronunciationAssessmentConfig('Hello darling, how are you?',
+      const pronunciationAssesmentConfig = new PronunciationAssessmentConfig(
+        phrase,
         speechsdk.PronunciationAssessmentGradingSystem.HundredMark,
         speechsdk.PronunciationAssessmentGranularity.Phoneme, true);
 
       pronunciationAssesmentConfig.applyTo(recognizer);
 
-      setMsg('Speack into your microphone...');
+      setMsg('Speak into your microphone...');
 
       recognizer.recognizeOnceAsync(result => {
         let displayText;
+        setMsg('Wait for results...');
         if (result.reason === ResultReason.RecognizedSpeech) {
           var pronunciationAssessmentResult = speechsdk.PronunciationAssessmentResult.fromResult(result);
           var pronunciationScore = pronunciationAssessmentResult.pronunciationScore;
           var wordLevelResult = pronunciationAssessmentResult.detailResult.Words;
 
-          console.log(pronunciationScore);
-          console.log(wordLevelResult);
+          console.log("Pronunciation Score:", pronunciationScore);
+          console.log("Word Score:", wordLevelResult);
           displayText = `RECOGNIZED: Text=${result.text}`
         } else {
           displayText = 'ERROR: Speech was cancelled or could not be recognized. Ensure your microphone is working properly.';
@@ -49,12 +52,18 @@ export const App = () => {
     }
   }
 
+  const handleInputOnChange = (e) => {
+    setPhrase(e.target.value);    
+  }
+
   return (
     <Container className="app-container">
       <h1 className="display-4 mb-3">Speech sample app</h1>
 
       <div className="row main-container">
         <div className="col-6">
+          <label htmlFor="inputPhrase">Enter a phrase to check pronunciation:</label>
+          <input id="inputPhrase" className="form-control mb-3" type="text" value={ phrase } onChange={ handleInputOnChange } />
           <i className="fas fa-microphone fa-lg me-2" onClick={() => sttFromMic()}></i>
           Convert speech to text from your mic.         
         </div>
