@@ -26,7 +26,8 @@ export const getTokenOrRefresh = async () => {
             }).then( response => {
                 if(response.ok) {
                     return response.text().then(data => {
-                        console.log('Token fetched from API', data);
+                        //console.log('Token fetched from API', data);
+                        cookie.set('speech-token', speechRegion + ':' + data, {maxAge: 540, path: '/'});
                         tokenResponse = {
                             authToken: data,
                             region: speechRegion
@@ -48,7 +49,7 @@ export const getTokenOrRefresh = async () => {
             return tokenResponse;
         }        
     } else {
-        console.log('Token fetched from cookie', speechToken);
+        //console.log('Token fetched from cookie', speechToken);
         const idx = speechToken.indexOf(":");
         return { authToken: speechToken.slice(idx + 1), region: speechToken.slice(0, idx) };
     }
