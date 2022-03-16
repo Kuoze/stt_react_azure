@@ -8,7 +8,7 @@ const speechsdk = require('microsoft-cognitiveservices-speech-sdk');
 export const App = () => {
 
   const [msg, setMsg] = useState('INITIALIZED: Click on microphone and start to speak');
-  const [phrase, setPhrase] = useState('Hello, I am the best');
+  const [phrase, setPhrase] = useState('Hello, What is your phone number?');
 
   const sttFromMic = async () => {
     setMsg('Initializing...');
@@ -18,10 +18,10 @@ export const App = () => {
       setMsg(`FATAL_ERROR: ${tokenRes.error}`);
     } else {
       const speechConfig = speechsdk.SpeechConfig.fromAuthorizationToken(tokenRes.authToken, tokenRes.region);
-      speechConfig.speechRecognitionLanguage = 'en-US';
+      speechConfig.speechRecognitionLanguage = 'en-US';      
 
       const audioConfig = speechsdk.AudioConfig.fromDefaultMicrophoneInput();
-      const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);
+      const recognizer = new speechsdk.SpeechRecognizer(speechConfig, audioConfig);      
 
       const pronunciationAssesmentConfig = new PronunciationAssessmentConfig(
         phrase,
@@ -48,7 +48,7 @@ export const App = () => {
 
         setMsg(displayText);
       });
-      setMsg('Wait for results...');
+      setMsg('Speak and Wait for results...');
     }
   }
 
